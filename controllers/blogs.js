@@ -1,8 +1,8 @@
 import express from 'express';
 export const blogsRouter = express.Router();
-import Blog from '../models/blog';
+import Blog from '../models/blog.js';
 
-blogsRouter.get('/api/blogs', (request, response) => {
+blogsRouter.get('/', (request, response) => {
     Blog
       .find({})
       .then(blogs => {
@@ -10,7 +10,7 @@ blogsRouter.get('/api/blogs', (request, response) => {
       });
   });
   
-blogsRouter.post('/api/blogs', (request, response) => {
+blogsRouter.post('/', (request, response) => {
     const blog = new Blog(request.body);
   
     blog

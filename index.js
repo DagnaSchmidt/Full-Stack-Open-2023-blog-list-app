@@ -1,8 +1,8 @@
-import {app} from './app';
-import {PORT} from './utils/config';
-import {info} from './utils/logger';
+import {app} from './app.js';
+import {PORT} from './utils/config.js';
+import {infoM} from './utils/logger.js';
 
 app.listen(PORT, () => {
-    info(`Server running on port ${PORT}`);
+    infoM(`Server running on port ${PORT}`);
   });
 
