@@ -127,6 +127,23 @@ const mostBlogs = (array) => {
   return result;
 }
 
+const mostLikes = (array) => {
+  const checkOccurrence = (arr, val) => {
+    let count = 0;
+    arr.forEach((v) => {
+      if(v.author === val){count += v.likes}});
+    return count;
+  }
+  const authorsOccurrence = array.map((item) => checkOccurrence(array, item.author));
+  const biggestOccurrence = Math.max(...authorsOccurrence);
+  const indexOfAuthor = authorsOccurrence.indexOf(biggestOccurrence);
+  const result = {
+    author: array[indexOfAuthor].author,
+    likes: biggestOccurrence
+  };
+  return result;
+}
+
 describe('first', () => { 
   test('dummy returns one', () => {
     const blogs = [];
@@ -176,4 +193,23 @@ describe('most blogs', () => {
     const result = mostBlogs(listWithFourBlogs);
     expect(result).toEqual({author: 'Edsger W. Dijkstra', blogs: 3});
   })
+})
+
+describe('author with most likes', () => {
+  test('list with one blog', () => {
+    const result = mostLikes(listWithOneBlog);
+    expect(result).toEqual({author: 'Edsger W. Dijkstra', likes: 5});
+  });
+  test('list with two blogs', () => {
+    const result = mostLikes(listWithTwoBlogs);
+    expect(result).toEqual({author: 'Michael Chan', likes: 7});
+  });
+  test('list with three blogs', () => {
+    const result = mostLikes(listWithThreeBlogs);
+    expect(result).toEqual({author: 'Edsger W. Dijkstra', likes: 17});
+  });
+  test('list with four blogs', () => {
+    const result = mostLikes(listWithFourBlogs);
+    expect(result).toEqual({author: 'Edsger W. Dijkstra', likes: 15});
+  });
 })
