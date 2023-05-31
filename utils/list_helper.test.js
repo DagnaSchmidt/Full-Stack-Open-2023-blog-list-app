@@ -55,6 +55,40 @@ const listWithTwoBlogs = [
     __v: 0
   }
 ]
+const listWithFourBlogs = [
+  {
+    _id: '5a422aa71b54a676234d17f8',
+    title: 'Go To Statement Considered Harmful',
+    author: 'Edsger W. Dijkstra',
+    url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+    likes: 5,
+    __v: 0
+  },
+  {
+    _id: '5a422aa71b555576234d17f8',
+    title: 'Go To Statement Considered Harmful',
+    author: 'Edsger W. Dijkstra',
+    url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+    likes: 5,
+    __v: 0
+  },
+  {
+    _id: '5a4244471b54a676234d17f8',
+    title: 'Go To Statement Considered Harmful',
+    author: 'Edsger W. Dijkstra',
+    url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+    likes: 5,
+    __v: 0
+  },
+  {
+    _id: "5a422a851b54a676234d17f7",
+    title: "React patterns",
+    author: "Michael Chan",
+    url: "https://reactpatterns.com/",
+    likes: 7,
+    __v: 0
+  }
+]
 
 const dummy = (blogs) => {
     return 1;
@@ -75,6 +109,22 @@ const favoriteBlog = (array) => {
   const biggestNumberOfLikes = Math.max(...allLikes);
   const favoriteBlog = array.filter((item) => item.likes === biggestNumberOfLikes);
   return favoriteBlog[0];
+}
+
+const mostBlogs = (array) => {
+  const checkOccurrence = (arr, val) => {
+    let count = 0;
+    arr.forEach((v) => v.author === val && count++);
+    return count;
+  }
+  const authorsOccurrence = array.map((item) => checkOccurrence(array, item.author));
+  const biggestOccurrence = Math.max(...authorsOccurrence);
+  const indexOfAuthor = authorsOccurrence.indexOf(biggestOccurrence);
+  const result = {
+    author: array[indexOfAuthor].author,
+    blogs: biggestOccurrence
+  };
+  return result;
 }
 
 describe('first', () => { 
@@ -116,3 +166,14 @@ describe('favorite blog', () => {
     expect(result).toEqual(listWithTwoBlogs[0] || listWithTwoBlogs[1]);
   })
 });
+
+describe('most blogs', () => {
+  test('list with one blog', () => {
+    const result = mostBlogs(listWithOneBlog);
+    expect(result).toEqual({author: 'Edsger W. Dijkstra', blogs: 1});
+  });
+  test('list with four blogs', () => {
+    const result = mostBlogs(listWithFourBlogs);
+    expect(result).toEqual({author: 'Edsger W. Dijkstra', blogs: 3});
+  })
+})
