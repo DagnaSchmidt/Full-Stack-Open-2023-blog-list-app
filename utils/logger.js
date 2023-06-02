@@ -1,7 +1,11 @@
 export const infoM = (...params) => {
-    console.log(...params)
+    if(process.env.NODE_ENV !== 'test') {
+      console.log(...params);
+    }
   };
   
 export const errorM = (...params) => {
-    console.error(...params)
+    if(process.env.NODE_ENV !== 'test') {
+      console.error(...params);
+    }
   };
