@@ -1,5 +1,6 @@
 import {MONGODB_URL} from './utils/config.js';
 import express from 'express';
+import 'express-async-errors';
 export const app = express();
 import cors from 'cors';
 import {blogsRouter} from './controllers/blogs.js';
@@ -27,7 +28,3 @@ app.use('/api/blogs', blogsRouter);
 
 app.use(unknownEndpoint);
 app.use(errorHandler);
-
-export default app;
-
-

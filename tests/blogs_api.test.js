@@ -1,23 +1,19 @@
 import mongoose from 'mongoose';
 import supertest from 'supertest';
-import app from '../app.js';
+import {app} from '../app.js';
+import { initialBlogs, blogsInDB } from './blogs_helper.js';
 import Blog from '../models/blog.js';
 import {beforeEach, jest} from '@jest/globals';
 jest.useRealTimers();
 const api = supertest(app);
 
-const initialBlogs = [{
-    "title": "Sample title",
-    "author": "Sample author",
-    "url": "sample url",
-    "likes": 45
-}];
-
 beforeEach(async () => {  
     await Blog.deleteMany({});
-    let blogObject = new Blog(initialBlogs[0]);
-    await blogObject.save();
-})
+
+    const blogObjects = initialBlogs.map(blog => new Blog(blog));
+    const promiseArray = blogObjects.map(blog => blog.save());
+    await Promise.all(promiseArray);
+});
 
 test('blogs are json', async () => {
     await api
@@ -51,7 +47,6 @@ test('blog can be added', async () => {
   });
 
 test('blog without content can not be added', async () => {
-    jest.setTimeout(60000);
     const newBlog = {
       "title": "new title"
     };
@@ -61,9 +56,24 @@ test('blog without content can not be added', async () => {
       .send(newBlog)
       .expect(400)
   
-    const response = await api.get('/api/notes');
-    expect(response.body).toHaveLength(initialNotes.length);
-  }, 10000);
+    const response = await api.get('/api/blogs');
+    expect(response.body).toHaveLength(initialBlogs.length);
+  }, 60000);
+
+test('blog can be viewed', async () => {
+    const currentBlogsInDB = await blogsInDB();  
+    const blogToView = currentBlogsInDB[1];
+  
+    const resultBlog = await api
+    .get(`/api/blogs/${blogToView.id}`)
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+    expect(resultBlog.body).toEqual(blogToView)
+  });
+
+test('id is not undefined', async () => {
+  
+});
   
 afterAll(async () => {
     jest.setTimeout(60000);
