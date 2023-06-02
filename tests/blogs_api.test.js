@@ -71,9 +71,26 @@ test('blog can be viewed', async () => {
     expect(resultBlog.body).toEqual(blogToView)
   });
 
-test('id is not undefined', async () => {
+// test('id is not undefined', async () => {
+//   const currentBlogsInDB = await blogsInDB();
   
-});
+// });
+
+test('set likes to 0 by default if likes number is missing', async () => {
+  const newBlog = {
+    "title": "new title",
+    "author": "new 2 author",
+    "url": "new 2 url",
+  };
+
+  const response = await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  expect(response.body.likes).toEqual(0);
+})
   
 afterAll(async () => {
     jest.setTimeout(60000);
