@@ -71,10 +71,16 @@ test('blog can be viewed', async () => {
     expect(resultBlog.body).toEqual(blogToView)
   });
 
-// test('id is not undefined', async () => {
-//   const currentBlogsInDB = await blogsInDB();
+test('id is not undefined', async () => {
+  const currentBlogsInDB = await blogsInDB();
+  const blogToView = currentBlogsInDB[0];
   
-// });
+  const resultBlog = await api
+  .get(`/api/blogs/${blogToView.id}`)
+  .expect(200)
+  .expect('Content-Type', /application\/json/)
+  expect(resultBlog.body.id).toBeDefined();
+});
 
 test('set likes to 0 by default if likes number is missing', async () => {
   const newBlog = {
