@@ -14,10 +14,10 @@ export const unknownEndpoint = (request, response) => {
 
 export const errorHandler = (error, request, response, next) => {
     errorM(error.message);
-    // if (error.name === 'CastError') {
-    //     return response.status(400).send({ error: 'wrong format of id' });
-    // } else if (error.name === 'ValidationError') {
-    //     return response.status(400).json({ error: error.message });
-    // }
+    if(error.name === 'CastError') {
+        return response.status(400).send({ error: 'wrong format of id' });
+    }else if(error.name === 'ValidationError') {
+        return response.status(400).json({ error: error.message });
+    }
     next(error);
   };

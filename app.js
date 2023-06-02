@@ -5,7 +5,6 @@ import cors from 'cors';
 import {blogsRouter} from './controllers/blogs.js';
 import {requestLogger, unknownEndpoint, errorHandler } from './utils/middleware.js';
 import {infoM} from './utils/logger.js';
-import {test} from '@jest/globals'
 import mongoose from 'mongoose';
 mongoose.set('strictQuery', false);
 
@@ -28,5 +27,7 @@ app.use('/api/blogs', blogsRouter);
 
 app.use(unknownEndpoint);
 app.use(errorHandler);
+
+export default app;
 
 
