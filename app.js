@@ -4,9 +4,11 @@ import 'express-async-errors';
 export const app = express();
 import cors from 'cors';
 import {blogsRouter} from './controllers/blogs.js';
+import {usersRouter} from './controllers/users.js';
 import {requestLogger, unknownEndpoint, errorHandler } from './utils/middleware.js';
 import {infoM} from './utils/logger.js';
 import mongoose from 'mongoose';
+
 mongoose.set('strictQuery', false);
 
 infoM('connecting to MongoDB');
@@ -25,6 +27,7 @@ app.use(express.json());
 
 app.use(requestLogger);
 app.use('/api/blogs', blogsRouter);
+app.use('/api/users', usersRouter);
 
 app.use(unknownEndpoint);
 app.use(errorHandler);
