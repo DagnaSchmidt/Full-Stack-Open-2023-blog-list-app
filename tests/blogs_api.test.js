@@ -142,5 +142,5 @@ describe('everything related to update one blog', () => {
   
 afterAll(async () => {
     jest.setTimeout(60000);
-    await mongoose.connection.close()
+    await mongoose.connection.close();
   });
