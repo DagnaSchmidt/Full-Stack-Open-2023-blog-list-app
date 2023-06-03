@@ -4,7 +4,6 @@ import bcryptjs from 'bcryptjs';
 import express from 'express';
 export const loginRouter = express.Router();
 import User from '../models/user.js';
-import { tokenExtractor } from '../utils/middleware.js';
 
 loginRouter.post('/', async (request, response) => {
     const { username, password } = request.body;
