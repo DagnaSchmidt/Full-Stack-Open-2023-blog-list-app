@@ -5,13 +5,13 @@ import {SECRET} from '../utils/config.js';
 import Blog from '../models/blog.js';
 import User from '../models/user.js';
 
-const getTokenFrom = request => {
-  const authorization = request.get('Authorization');
-  if(authorization && authorization.startsWith('Bearer ')){
-    return authorization.replace('Bearer ', '') ; 
-  }  
-  return null;
-}
+// const getTokenFrom = request => {
+//   const authorization = request.get('Authorization');
+//   if(authorization && authorization.startsWith('Bearer ')){
+//     return authorization.replace('Bearer ', ''); 
+//   }  
+//   return null;
+// }
 
 blogsRouter.get('/', async (request, response) => {
     const blogs = await Blog.find({}).populate('user', {username: 1, name: 1, id: 1});
@@ -30,7 +30,7 @@ blogsRouter.get('/:id', async (request, response) => {
 blogsRouter.post('/', async (request, response) => {
     const body = request.body;
 
-    const decodedToken = jwt.verify(getTokenFrom(request), SECRET);
+    const decodedToken = jwt.verify(request.body.token, SECRET);
     console.log(decodedToken);
     if(!decodedToken.id){
       return response.status(401).json({error: 'invalid token'});
