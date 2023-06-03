@@ -22,7 +22,7 @@ describe('one user in DB', () => {
         const currentUsersInDB = await usersInDB();
 
         const newUser = {
-            "username" : "Jo",
+            "username" : "Jose",
             "name" : "Josefine",
             "password" : "anotherPassword"
         }
@@ -38,6 +38,24 @@ describe('one user in DB', () => {
 
         const usernames = changedUsersInDB.map(u => u.username);
         expect(usernames).toContain(newUser.username);
+    });
+
+    test('no user created when username length < 3', async () => {
+        const currentUsersInDB = await usersInDB();
+
+        const newUser = {
+            "username" : "Jo",
+            "name" : "Josefine",
+            "password" : "anotherPassword"
+        }
+
+        await api 
+        .post('/api/users')
+        .send(newUser)
+        .expect(400)
+
+        const response = await api.get('/api/users');
+        expect(response.body).toHaveLength(currentUsersInDB.length);
     })
 });
 

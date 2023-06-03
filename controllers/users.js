@@ -15,8 +15,12 @@ usersRouter.post('/', async (request, response) => {
         passwordHash,
     });
 
-    const savedUser = await user.save();
-    response.status(201).json(savedUser);
+    if(password.length > 3){
+        const savedUser = await user.save();
+        response.status(201).json(savedUser);
+    }else{
+        response.status(400).end();
+    }
 });
 
 usersRouter.get('/', async (request, response) => {
