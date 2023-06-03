@@ -121,6 +121,23 @@ describe('everything related to DELETE one blog', () => {
     const ids = changedBlogsDB.map(r => r.id);
     expect(ids).not.toContain(blogToDelete.id);
   })
+});
+
+describe('everything related to update one blog', () => {
+  test('update likes +1', async () => {
+    const currentBlogsInDB = await blogsInDB();
+    const blogToUpdate = currentBlogsInDB[0];
+    const oldLikes = blogToUpdate.likes;
+
+    await api
+      .put(`/api/blogs/${blogToUpdate.id}`)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const changedBlogsDB = await blogsInDB();
+    const updatedBlog = changedBlogsDB[0];
+    expect(updatedBlog.likes).toEqual(oldLikes +1);
+  })
 })
   
 afterAll(async () => {
