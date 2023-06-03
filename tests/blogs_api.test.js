@@ -27,6 +27,7 @@ describe('everything POST blog related', () => {
   
     await api
       .post('/api/blogs')
+      .set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkRhZ25hIiwiaWQiOiI2NDdiM2JkNGY4MTFjZjg1Y2FhMWFlNGMiLCJpYXQiOjE2ODU3OTkxODB9.MDU-NzC2pzijpBG-Dp_zCx5dqZun4X7EWGN-rDCtQHE')
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -43,6 +44,22 @@ describe('everything POST blog related', () => {
   
     await api
       .post('/api/blogs')
+      .set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkRhZ25hIiwiaWQiOiI2NDdiM2JkNGY4MTFjZjg1Y2FhMWFlNGMiLCJpYXQiOjE2ODU3OTkxODB9.MDU-NzC2pzijpBG-Dp_zCx5dqZun4X7EWGN-rDCtQHE')
+      .send(newBlog)
+      .expect(400)
+  
+    const response = await api.get('/api/blogs');
+    expect(response.body).toHaveLength(initialBlogs.length);
+  }, 60000);
+
+  test('blog without authorization can not be added', async () => {
+    const newBlog = {
+      "title": "new title"
+    };
+  
+    await api
+      .post('/api/blogs')
+      .set('Authorization', 'Bearer eyJhbGciOiJIM2JkNGY4MTFjZjg1Y2FhMWFlNGMiLCJpYXQiOjE2ODU3OTkxODB9.MDU-NzC2pzijpBG-Dp_zCx5dqZun4X7EWGN-rDCtQHE')
       .send(newBlog)
       .expect(400)
   
@@ -59,6 +76,7 @@ describe('everything POST blog related', () => {
   
     const response = await api
       .post('/api/blogs')
+      .set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkRhZ25hIiwiaWQiOiI2NDdiM2JkNGY4MTFjZjg1Y2FhMWFlNGMiLCJpYXQiOjE2ODU3OTkxODB9.MDU-NzC2pzijpBG-Dp_zCx5dqZun4X7EWGN-rDCtQHE')
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -109,10 +127,12 @@ describe('everything related to GET one blog', () => {
 describe('everything related to DELETE one blog', () => {
   test('delete one post', async () => {
     const currentBlogsInDB = await blogsInDB();
-    const blogToDelete = currentBlogsInDB[0];
+    console.log(currentBlogsInDB);
+    const blogToDelete = currentBlogsInDB[2];
 
     const deletedBlog = await api
       .delete(`/api/blogs/${blogToDelete.id}`)
+      .set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkRhZ25hIiwiaWQiOiI2NDdiM2JkNGY4MTFjZjg1Y2FhMWFlNGMiLCJpYXQiOjE2ODU3OTkxODB9.MDU-NzC2pzijpBG-Dp_zCx5dqZun4X7EWGN-rDCtQHE')
       .expect(204)
 
     const changedBlogsDB = await blogsInDB();
@@ -120,7 +140,7 @@ describe('everything related to DELETE one blog', () => {
 
     const ids = changedBlogsDB.map(r => r.id);
     expect(ids).not.toContain(blogToDelete.id);
-  })
+  });
 });
 
 describe('everything related to update one blog', () => {

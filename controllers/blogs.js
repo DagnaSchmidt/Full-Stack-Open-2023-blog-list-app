@@ -1,17 +1,7 @@
 import express from 'express';
 export const blogsRouter = express.Router();
-import jwt from "jsonwebtoken";
-import {SECRET} from '../utils/config.js';
 import Blog from '../models/blog.js';
 import User from '../models/user.js';
-
-const getTokenFrom = request => {
-  const authorization = request.get('Authorization');
-  if(authorization && authorization.startsWith('Bearer ')){
-    return authorization.replace('Bearer ', '') ; 
-  }  
-  return null;
-}
 
 blogsRouter.get('/', async (request, response) => {
     const blogs = await Blog.find({}).populate('user', {username: 1, name: 1, id: 1});
@@ -30,13 +20,11 @@ blogsRouter.get('/:id', async (request, response) => {
 blogsRouter.post('/', async (request, response) => {
     const body = request.body;
 
-    const decodedToken = jwt.verify(getTokenFrom(request), SECRET);
-    console.log(decodedToken);
-    if(!decodedToken.id){
+    if(!request.body.user){
       return response.status(401).json({error: 'invalid token'});
     }
 
-    const user = await User.findById(decodedToken.id);
+    const user = await User.findById(request.body.user.id);
     const newBlog = new Blog({...body, user: user._id});
 
       const savedBlog = await newBlog.save();
@@ -46,8 +34,14 @@ blogsRouter.post('/', async (request, response) => {
 });
 
 blogsRouter.delete('/:id', async (request, response) => {
-  const deleteBlog = await Blog.findByIdAndRemove(request.params.id);
-  response.status(204).end();
+  const blogToDelete = await Blog.findById(request.params.id);
+
+  if(request.body.user.id === blogToDelete.user.toString()){
+    const deleteBlog = await Blog.findByIdAndRemove(request.params.id);
+    response.status(204).end();
+  }else{
+    return response.status(401).json({error: 'Unauthorized'});
+  }
 });
 
 blogsRouter.put('/:id', async (request, response) => {
