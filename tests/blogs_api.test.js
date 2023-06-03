@@ -15,19 +15,9 @@ beforeEach(async () => {
     await Promise.all(promiseArray);
 });
 
-test('blogs are json', async () => {
-    await api
-      .get('/api/blogs')
-      .expect(200)
-      .expect('Content-Type', /application\/json/)
-  });
+describe('everything POST blog related', () => {
 
-test('all blogs are returned', async () => {
-    const response = await api.get('/api/blogs');
-    expect(response.body).toHaveLength(initialBlogs.length);
-});
-
-test('blog can be added', async () => {
+  test('blog can be added', async () => {
     const newBlog = {
         "title": "new title",
         "author": "new author",
@@ -46,7 +36,7 @@ test('blog can be added', async () => {
     expect(response.body).toHaveLength(initialBlogs.length + 1);
   });
 
-test('blog without content can not be added', async () => {
+  test('blog without content can not be added', async () => {
     const newBlog = {
       "title": "new title"
     };
@@ -60,7 +50,40 @@ test('blog without content can not be added', async () => {
     expect(response.body).toHaveLength(initialBlogs.length);
   }, 60000);
 
-test('blog can be viewed', async () => {
+  test('set likes to 0 by default if likes number is missing', async () => {
+    const newBlog = {
+      "title": "new title",
+      "author": "new 2 author",
+      "url": "new 2 url",
+    };
+  
+    const response = await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+  
+    expect(response.body.likes).toEqual(0);
+  })
+});
+
+describe('everything related to GET all data', () => {
+
+  test('blogs are json', async () => {
+    await api
+      .get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+  });
+
+  test('all blogs are returned', async () => {
+      const response = await api.get('/api/blogs');
+      expect(response.body).toHaveLength(initialBlogs.length);
+  });
+});
+
+describe('everything related to GET one blog', () => {
+  test('blog can be viewed', async () => {
     const currentBlogsInDB = await blogsInDB();  
     const blogToView = currentBlogsInDB[1];
   
@@ -71,31 +94,50 @@ test('blog can be viewed', async () => {
     expect(resultBlog.body).toEqual(blogToView)
   });
 
-test('id is not undefined', async () => {
-  const currentBlogsInDB = await blogsInDB();
-  const blogToView = currentBlogsInDB[0];
-  
-  const resultBlog = await api
-  .get(`/api/blogs/${blogToView.id}`)
-  .expect(200)
-  .expect('Content-Type', /application\/json/)
-  expect(resultBlog.body.id).toBeDefined();
+  test('id is not undefined', async () => {
+    const currentBlogsInDB = await blogsInDB();
+    const blogToView = currentBlogsInDB[0];
+    
+    const resultBlog = await api
+    .get(`/api/blogs/${blogToView.id}`)
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+    expect(resultBlog.body.id).toBeDefined();
+  });
 });
 
-test('set likes to 0 by default if likes number is missing', async () => {
-  const newBlog = {
-    "title": "new title",
-    "author": "new 2 author",
-    "url": "new 2 url",
-  };
+describe('everything related to DELETE one blog', () => {
+  test('delete one post', async () => {
+    const currentBlogsInDB = await blogsInDB();
+    const blogToDelete = currentBlogsInDB[0];
 
-  const response = await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(201)
-    .expect('Content-Type', /application\/json/)
+    const deletedBlog = await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .expect(204)
 
-  expect(response.body.likes).toEqual(0);
+    const changedBlogsDB = await blogsInDB();
+    expect(changedBlogsDB).toHaveLength(initialBlogs.length - 1);
+
+    const ids = changedBlogsDB.map(r => r.id);
+    expect(ids).not.toContain(blogToDelete.id);
+  })
+});
+
+describe('everything related to update one blog', () => {
+  test('update likes +1', async () => {
+    const currentBlogsInDB = await blogsInDB();
+    const blogToUpdate = currentBlogsInDB[0];
+    const oldLikes = blogToUpdate.likes;
+
+    await api
+      .put(`/api/blogs/${blogToUpdate.id}`)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const changedBlogsDB = await blogsInDB();
+    const updatedBlog = changedBlogsDB[0];
+    expect(updatedBlog.likes).toEqual(oldLikes +1);
+  })
 })
   
 afterAll(async () => {
