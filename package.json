@@ -15,7 +15,7 @@
   "scripts": {
     "dev": "nodemon index.js",
     "start": "node index.js",
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js -- tests/users_api.test.js"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js -- tests/blogs_api.test.js"
   },
   "devDependencies": {
     "jest": "^29.5.0",
