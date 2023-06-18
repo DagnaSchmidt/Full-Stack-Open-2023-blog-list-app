@@ -5,6 +5,7 @@ export const app = express();
 import cors from 'cors';
 import {blogsRouter} from './controllers/blogs.js';
 import {usersRouter} from './controllers/users.js';
+// import { testingRouter } from './controllers/testing.js';
 import {requestLogger, unknownEndpoint, errorHandler, tokenExtractor, userExtractor } from './utils/middleware.js';
 import {infoM} from './utils/logger.js';
 import mongoose from 'mongoose';
@@ -16,10 +17,10 @@ infoM('connecting to MongoDB');
 
 mongoose.connect(MONGODB_URL)
     .then(result => {
-        console.log('connected to MongoDB');
+        infoM('connected to MongoDB');
     })  
     .catch((error) => {
-        console.log('error connecting to MongoDB:', error.message);
+        infoM('error connecting to MongoDB:', error.message);
     });
 
 app.use(cors());
@@ -32,6 +33,8 @@ app.use(userExtractor);
 app.use('/api/blogs', blogsRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/login', loginRouter);
+//
+// app.use('/api/testing', testingRouter);
 
 app.use(unknownEndpoint);
 app.use(errorHandler);
